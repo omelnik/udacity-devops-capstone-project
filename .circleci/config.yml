@@ -61,7 +61,8 @@ jobs:
       - run:
           name: install dependencies
           command: |
-              yum update && yum -y install docker
+              rm /etc/yum.repos.d/docker-ce.repo
+              yum update -y && amazon-linux-extras install docker
               service docker start
               usermod -a -G docker ec2-user
 
