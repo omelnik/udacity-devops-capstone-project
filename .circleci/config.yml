@@ -61,8 +61,9 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            yum update -y && amazon-linux-extras install docker
-            sudo yum install -y docker
+              amazon-linux-extras install docker
+              service docker start
+              usermod -a -G docker ec2-user
 
       - run:
           name: build an image
