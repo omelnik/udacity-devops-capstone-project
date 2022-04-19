@@ -9,6 +9,10 @@ executors:
     docker:
       - image: cimg/python:3.9
 
+  docker-awscli-executor:
+    docker:
+      - image: amazon/aws-cli
+
 
 jobs:
   build:
@@ -48,6 +52,29 @@ jobs:
           name: run lint
           command: |
             make lint
+
+  push-image-to-registry:
+    executor: docker-awscli-executor
+    steps:
+      - checkout
+
+      - run:
+          name: install dependencies
+          command: |
+            sudo yum install -y docker
+            sudo service docker start
+
+      - run:
+          name: build an image
+          command: |
+            ./scripts/docker/build.sh
+
+      - run:
+          name: push an image to registry
+          command: |
+            ./scripts/docker/upload.sh
+
+
 
 
 workflows:
