@@ -66,8 +66,7 @@ jobs:
       - run:
           name: start docker daemon
           command: |
-              systemctl enable --now docker
-              systemctl status docker
+            sudo service docker start
 
       - run:
           name: build an image
