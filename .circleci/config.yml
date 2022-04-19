@@ -54,12 +54,18 @@ jobs:
             make lint
 
   push-image-to-registry:
-    executor: docker-awscli-executor
+    executor: docker-python-executor
     steps:
       - checkout
-      
+
+      - run:
+          name: install dependencies
+          command: |
+            pip install awscli
+
       - setup_remote_docker:
           version: 20.10.12
+          docker_layer_caching: true
 
       - run:
           name: build an image
