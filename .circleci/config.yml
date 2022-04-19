@@ -67,12 +67,16 @@ jobs:
       - run:
           name: build an image
           command: |
-            ./scripts/docker/build.sh
+            cd scripts/docker/
+            chmod +x build.sh
+            ./build.sh
 
       - run:
           name: push an image to registry
           command: |
-            ./scripts/docker/upload.sh
+            cd scripts/docker/
+            chmod +x upload.sh
+            ./upload.sh
 
 
 
