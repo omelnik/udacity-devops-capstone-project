@@ -83,3 +83,5 @@ workflows:
     - build
     - lint:
         requires: [build]
+    - push-image-to-registry:
+        requires: [lint]
