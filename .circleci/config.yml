@@ -58,11 +58,11 @@ jobs:
     steps:
       - checkout
 
-      - run:
-          name: install dependencies
-          command: |
-            yum install -y docker
-            service docker start
+      # - run:
+      #     name: install dependencies
+      #     command: |
+      #       yum install -y docker
+      #       service docker start
 
       - run:
           name: build an image
