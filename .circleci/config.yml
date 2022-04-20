@@ -88,6 +88,11 @@ jobs:
             sudo apt-get install -y kubectl
 
       - run:
+          name: Install AWS Command Line Interface package
+          command: |
+            pip install awscli
+
+      - run:
           name: Create or update the kubeconfig file for the cluster
           command: aws eks update-kubeconfig --name cluster-1
 
