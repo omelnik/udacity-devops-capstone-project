@@ -104,9 +104,7 @@ jobs:
           name: Tag the nodegroup instance with the pipeline id
           command: |
             InstanceId=$(aws ec2 describe-instances --query "Reservations[?Instances[?Tags[?Value=='ng-2']]]" | jq -r ".[].Instances[].InstanceId")
-            aws ec2 create-tags \                                       
-              --resources $InstanceId \
-              --tags Key=Name,Value="cluster-1-ng-2-Node-${CIRCLE_WORKFLOW_ID:0:7}"
+            aws ec2 create-tags --resources $InstanceId --tags Key=Name,Value="cluster-1-ng-2-Node-${CIRCLE_WORKFLOW_ID:0:7}"
 
 workflows:
   default:
