@@ -49,6 +49,52 @@ jobs:
           command: |
             make lint
 
+  push-image-to-registry:
+    executor: docker-python-executor
+    steps:
+      - checkout
+
+      - run:
+          name: install dependencies
+          command: |
+            pip install awscli
+
+      - setup_remote_docker:
+          version: 20.10.12
+          docker_layer_caching: true
+
+      - run:
+          name: build an image
+          command: |
+            chmod +x ./scripts/docker/build.sh
+            ./scripts/docker/build.sh
+
+      - run:
+          name: push an image to registry
+          command: |
+            chmod +x ./scripts/docker/upload.sh
+            ./scripts/docker/upload.sh
+
+  deploy-latest-image:
+    executor: docker-python-executor
+    steps:
+      - run:
+          name: Install kubectl
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y apt-transport-https ca-certificates curl
+            sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+            echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+            sudo apt-get update
+            sudo apt-get install -y kubectl
+
+      - run:
+          name: Create or update the kubeconfig file for the cluster
+          command: aws eks update-kubeconfig --name cluster-1
+
+      - run:
+          name: Rollout the latest image
+          command: kubectl rollout restart deployment.apps/fastapi-app-deployment
 
 workflows:
   default:
@@ -56,3 +102,5 @@ workflows:
     - build
     - lint:
         requires: [build]
+    - push-image-to-registry:
+        requires: [lint]
