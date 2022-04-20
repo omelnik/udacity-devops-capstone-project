@@ -9,7 +9,6 @@ executors:
     docker:
       - image: cimg/python:3.9
 
-
 jobs:
   build:
     executor: docker-python-executor
@@ -89,12 +88,23 @@ jobs:
             sudo apt-get install -y kubectl
 
       - run:
+          name: Install AWS Command Line Interface package
+          command: |
+            pip install awscli
+
+      - run:
           name: Create or update the kubeconfig file for the cluster
           command: aws eks update-kubeconfig --name cluster-1
 
       - run:
           name: Rollout the latest image
           command: kubectl rollout restart deployment.apps/fastapi-app-deployment
+
+      - run:
+          name: Tag the nodegroup instance with the pipeline id
+          command: |
+            InstanceId=$(aws ec2 describe-instances --query "Reservations[?Instances[?Tags[?Value=='ng-2']]]" | jq -r ".[].Instances[].InstanceId")
+            aws ec2 create-tags --resources $InstanceId --tags Key=Name,Value="cluster-1-ng-2-Node-${CIRCLE_WORKFLOW_ID:0:7}"
 
 workflows:
   default:
@@ -104,3 +114,5 @@ workflows:
         requires: [build]
     - push-image-to-registry:
         requires: [lint]
+    - deploy-latest-image:
+        requires: [push-image-to-registry]
