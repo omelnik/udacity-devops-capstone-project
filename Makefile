@@ -9,6 +9,7 @@ VENV   = .venv
 PIP    = $(VENV)/bin/pip3
 PYLINT = $(VENV)/bin/pylint
 PYTHON = $(VENV)/bin/python3
+PYTEST = $(VENV)/bin/pytest
 
 setup:
 	# Create python virtualenv & source it
@@ -19,6 +20,9 @@ install: setup
 	# This should be run from inside a virtualenv
 	$(PIP) install --upgrade pip &&\
 		$(PIP) install -r requirements.txt
+
+tests:
+	$(PYTEST)
 
 lint:
 	hadolint Dockerfile;
