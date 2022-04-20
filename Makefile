@@ -20,6 +20,9 @@ install: setup
 	$(PIP) install --upgrade pip &&\
 		$(PIP) install -r requirements.txt
 
+tests:
+	pytest
+
 lint:
 	hadolint Dockerfile;
 	$(PYLINT) --disable=R,C,W1203,W1202 ./app/main.py

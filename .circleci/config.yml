@@ -25,6 +25,20 @@ jobs:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
 
+  test:
+    executor: docker-python-executor
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "requirements.txt" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+      - run:
+          name: run tests
+          command: |
+            make tests
+
   lint:
     executor: docker-python-executor
     steps:
@@ -111,6 +125,8 @@ workflows:
     jobs:
     - build
     - lint:
+        requires: [build]
+    - test:
         requires: [build]
     - push-image-to-registry:
         requires: [lint]
