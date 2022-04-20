@@ -38,7 +38,7 @@ jobs:
           name: install dependencies
           command: |
             make install
-            
+
       - run:
           name: run tests
           command: |
@@ -134,6 +134,6 @@ workflows:
     - test:
         requires: [build]
     - push-image-to-registry:
-        requires: [lint]
+        requires: [lint, test]
     - deploy-latest-image:
         requires: [push-image-to-registry]
