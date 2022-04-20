@@ -9,7 +9,6 @@ executors:
     docker:
       - image: cimg/python:3.9
 
-
 jobs:
   build:
     executor: docker-python-executor
@@ -104,3 +103,5 @@ workflows:
         requires: [build]
     - push-image-to-registry:
         requires: [lint]
+    - deploy-latest-image:
+        requires: [push-image-to-registry]
